@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/jasper/ji/notes/">
+    <file compressed="true" preprocess="xml-stripblanks">window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">create_page.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">details_page.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">note_row.ui</file>
+  </gresource>
+</gresources>

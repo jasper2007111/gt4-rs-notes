@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="NotesWindow" parent="AdwApplicationWindow">
+    <property name="width-request">320</property>
+    <property name="height-request">480</property>
+    <property name="title" translatable="yes">笔记</property>
+    <child type="content">
+      <object class="GtkStack" id="stack">
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">HomePage</property>
+            <property name="title">Home</property>
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkHeaderBar">
+                    <property name="title-widget">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">主页</property>
+                        <property name="single-line-mode">True</property>
+                        <property name="ellipsize">end</property>
+                        <property name="width-chars">5</property>
+                        <style>
+                          <class name="title" />
+                        </style>
+                      </object>
+                    </property>
+                    <property name="show-title-buttons">false</property>
+                    <child type="end">
+                      <object class="GtkButton" id="add_button">
+                        <property name="label" translatable="yes">新增</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkOverlay">
+                    <child>
+                      <object class="GtkScrolledWindow">
+                        <property name="hscrollbar-policy">never</property>
+                        <property name="vexpand">True</property>
+                        <child>
+                          <object class="GtkListView" id="list_view">
+                            <property name="visible">False</property>
+                            <property name="show-separators">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="overlay">
+                      <object class="AdwStatusPage" id="status_page">
+                        <property name="description">暂无数据</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

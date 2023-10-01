@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="DetailsPage" parent="GtkBox">
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkHeaderBar">
+        <property name="title-widget">
+          <object class="GtkLabel">
+            <property name="label" translatable="yes">详情</property>
+            <property name="single-line-mode">True</property>
+            <property name="ellipsize">end</property>
+            <property name="width-chars">5</property>
+            <style>
+              <class name="title" />
+            </style>
+          </object>
+        </property>
+        <property name="show-title-buttons">false</property>
+        <child>
+          <object class="GtkButton" id="back_button">
+            <property name="label" translatable="yes">返回</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="hscrollbar-policy">never</property>
+            <property name="vexpand">True</property>
+            <child>
+              <object class="GtkTextView" id="text_view">
+                <property name="can-focus">False</property>
+                <property name="wrap-mode">word-char</property>
+                <property name="editable">False</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="delete_button">
+            <property name="label" translatable="yes">删除</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
