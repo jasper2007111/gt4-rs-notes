@@ -8,7 +8,7 @@ use gtk::prelude::*;
 use gtk::{gio, glib};
 use window::Window;
 
-static APP_ID: &str = "com.jasper.ji.notes";
+static APP_ID: &str = "com.jasper.ji.gtk.rs.notes";
 
 fn main() -> glib::ExitCode {
     gio::resources_register_include!("gtk4-rs-notes.gresource")

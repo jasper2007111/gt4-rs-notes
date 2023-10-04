@@ -6,7 +6,7 @@ use gtk::{glib, CompositeTemplate, Label};
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
-#[template(resource = "/com/jasper/ji/notes/note_row.ui")]
+#[template(resource = "/com/jasper/ji/gtk/rs/notes/note_row.ui")]
 pub struct NoteRow {
     #[template_child]
     pub content_label: TemplateChild<Label>,

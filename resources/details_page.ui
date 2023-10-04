@@ -21,6 +21,23 @@
             <property name="label" translatable="yes">返回</property>
           </object>
         </child>
+        <child type="end">
+          <object class="GtkButton" id="edit_button">
+            <property name="label" translatable="yes">编辑</property>
+          </object>
+        </child>
+        <child type="end">
+          <object class="GtkButton" id="save_button">
+            <property name="visible">False</property>
+            <property name="label" translatable="yes">保存</property>
+          </object>
+        </child>
+        <child type="end">
+          <object class="GtkButton" id="cancel_button">
+            <property name="visible">False</property>
+            <property name="label" translatable="yes">取消</property>
+          </object>
+        </child>
       </object>
     </child>
     <child>

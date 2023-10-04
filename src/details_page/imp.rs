@@ -6,10 +6,22 @@ use gtk::{glib, CompositeTemplate, TextView, Button};
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
-#[template(resource = "/com/jasper/ji/notes/details_page.ui")]
+#[template(resource = "/com/jasper/ji/gtk/rs/notes/details_page.ui")]
 pub struct DetailsPage {
     #[template_child]
     pub back_button: TemplateChild<Button>,
+
+    #[template_child]
+    pub edit_button: TemplateChild<Button>,
+
+    #[template_child]
+    pub save_button: TemplateChild<Button>,
+
+    #[template_child]
+    pub cancel_button: TemplateChild<Button>,
+
+    #[template_child]
+    pub delete_button: TemplateChild<Button>,
 
     #[template_child]
     pub text_view: TemplateChild<TextView>,

@@ -9,7 +9,7 @@ use rusqlite::Connection;
 
 // Object holding the state
 #[derive(CompositeTemplate, Default)]
-#[template(resource = "/com/jasper/ji/notes/window.ui")]
+#[template(resource = "/com/jasper/ji/gtk/rs/notes/window.ui")]
 pub struct Window {
     #[template_child]
     pub stack: TemplateChild<Stack>,

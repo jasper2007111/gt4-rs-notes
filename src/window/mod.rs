@@ -71,7 +71,7 @@ impl Window {
         // Get state and set model
         self.imp().notes.replace(Some(model));
 
-        let conn = Connection::open("./notos.db3");
+        let conn = Connection::open("./notes.db3");
         if let Ok(c) = conn {
             let _ = c.execute(
                 "CREATE TABLE note (
@@ -112,6 +112,33 @@ impl Window {
         }
 
         self.update_view();
+    }
+
+    pub fn delete_note(&self, id: i64) {
+        let a = self.imp().sqlite_con.borrow();
+        let result = a.as_ref().clone().expect("msg").execute(
+            &format!("DELETE FROM note WHERE id={}", id),
+            ()
+        );
+
+        if result.is_ok() {
+            self.back();
+            self.refresh_data();
+        }
+    }
+
+    pub fn update_note(&self, note: &NoteObject) {
+        let a = self.imp().sqlite_con.borrow();
+        let result = a.as_ref().clone().expect("msg").execute(
+            &format!("UPDATE note SET content=\"{}\" WHERE id={}", note.content(), note.id()),
+            ()
+        );
+
+        if result.is_ok() {
+            println!("更新成功");
+        } else {
+            println!("错误：{:?}", result.err());
+        }
     }
 
     pub fn create_note(&self, content: &str) {
@@ -191,7 +218,7 @@ impl Window {
         self.imp().list_view.connect_activate(
             clone!(@weak stack, @weak self as window=>move|list_view, position| {
                 let model = list_view.model().unwrap();
-                let note = model.item(position).and_downcast::<NoteObject>().unwrap();
+                let mut note = model.item(position).and_downcast::<NoteObject>().unwrap();
 
                 let page = stack.child_by_name("DetailsPage");
                 if let Some(p) = page {
@@ -199,7 +226,7 @@ impl Window {
                 }
 
                 let details_page = DetailsPage::new();
-                details_page.setup(&window, &note.content());
+                details_page.setup(&window, &mut note);
                 stack.add_named(&details_page, Some("DetailsPage"));
                 stack.set_visible_child(&details_page);
             }),
