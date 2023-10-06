@@ -59,6 +59,9 @@
         <child>
           <object class="GtkButton" id="delete_button">
             <property name="label" translatable="yes">删除</property>
+            <style>
+              <class name="destructive-action"/>
+            </style>
           </object>
         </child>
       </object>
