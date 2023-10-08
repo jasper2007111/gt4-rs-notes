@@ -19,6 +19,10 @@ glib::wrapper! {
                     gtk::ConstraintTarget, gtk::Native, gtk::Root, gtk::ShortcutManager;
 }
 
+struct CountQuery {
+    count: i64,
+}
+
 impl Window {
     pub fn new(app: &adw::Application) -> Self {
         // Create new window
@@ -27,6 +31,9 @@ impl Window {
 
     fn setup(&self) {
         let imp = self.imp();
+
+        self.imp().cur_page.replace(1);
+        self.imp().total_page.replace(1);
 
         let stack = imp.stack.clone();
         stack.set_transition_type(gtk::StackTransitionType::OverLeftRight);
@@ -43,6 +50,50 @@ impl Window {
                     stack.set_visible_child(&create_page);
                 }
             }));
+
+        self.imp().prev_button.connect_clicked(
+            clone!(@weak stack,  @weak self as window=>move|_btn|{
+                println!("prev_page");
+                window.prev_page();
+            }),
+        );
+
+        self.imp().next_button.connect_clicked(
+            clone!(@weak stack,  @weak self as window=>move|_btn|{
+                println!("next_button");
+                window.next_page();
+            }),
+        );
+    }
+
+    fn prev_page(&self) {
+        let cur_page = self.imp().cur_page.clone();
+        let prev_page = cur_page.borrow().clone() - 1;
+        if prev_page == 1 {
+            self.imp().prev_button.set_sensitive(false); // 不可用
+        }
+
+        let total_page = self.imp().total_page.borrow().clone();
+        if prev_page != total_page {
+            self.imp().next_button.set_sensitive(true); // 可用
+        }
+
+        self.imp().cur_page.replace(prev_page);
+        self.refresh_data();
+    }
+
+    fn next_page(&self) {
+        let cur_page = self.imp().cur_page.clone();
+        let next_page = cur_page.borrow().clone() + 1;
+        let total_page = self.imp().total_page.borrow().clone();
+        if next_page == total_page {
+            self.imp().next_button.set_sensitive(false); // 不可用
+        }
+        if next_page != 1 {
+            self.imp().prev_button.set_sensitive(true); // 可用
+        }
+        self.imp().cur_page.replace(next_page);
+        self.refresh_data();
     }
 
     pub fn back(&self) {
@@ -83,6 +134,7 @@ impl Window {
             );
             self.imp().sqlite_con.replace(Some(c));
 
+            self.create_test_data();
             self.refresh_data();
         }
 
@@ -91,14 +143,31 @@ impl Window {
         self.imp().list_view.set_model(Some(&selection_model));
     }
 
+    fn create_test_data(&self) {
+        for i in 0..100 {
+            if i % 2 == 0 {
+                if i % 10 == 0 {
+                    self.create_note(&format!("{}: 测试笔记", i));
+                } else {
+                    self.create_note(&format!("{}: Rust速度惊人且内存利用率极高。由于没有运行时和垃圾回收, 它能够胜任对性能要求特别高的服务, 可以在嵌入式设备上运行，还能轻松和其他语言集成。", i));
+                }
+            } else if i % 3 == 0 {
+                self.create_note(&format!("{}: Rust拥有出色的文档、友好的编译器和清晰的错误提示信息, 还集成了一流的工具——包管理器和构建工具, 智能地自动补全和类型检验的多编辑器支持, 以及自动格式化代码等等。", i));
+            } else {
+                self.create_note(&format!("{}: 全世界已有数百家公司在生产环境中使用 Rust，以达到快速、跨平台、低资源占用的目的。很多著名且受欢迎的软件，例如 Firefox、 Dropbox 和 Cloudflare 都在使用 Rust。从初创公司到大型企业，从嵌入式设备到可扩展的 Web 服务，Rust 都完全合适。", i));
+            }
+        }
+    }
+
     fn refresh_data(&self) {
+        let cur_page = self.imp().cur_page.borrow().clone();
+        println!("refresh_data: {}", cur_page);
         let a = self.imp().sqlite_con.borrow();
-        let mut stmt = a
-            .as_ref()
-            .clone()
-            .expect("msg")
-            .prepare("SELECT id, content, create_at FROM note ORDER by id DESC")
-            .expect("msg");
+        let sql = format!(
+            "SELECT id, content, create_at FROM note ORDER by id DESC limit {}, 20",
+            (cur_page - 1) * 20
+        );
+        let mut stmt = a.as_ref().clone().expect("msg").prepare(&sql).expect("msg");
         let note_iter = stmt
             .query_map([], |row| {
                 Ok(NoteObject::new(row.get(0)?, row.get(1)?, Some(row.get(2)?)))
@@ -111,18 +180,55 @@ impl Window {
             self.notes().append(&note.unwrap());
         }
 
+        let count_sql = "SELECT count(id) FROM note";
+        let mut stmt_2 = a
+            .as_ref()
+            .clone()
+            .expect("msg")
+            .prepare(count_sql)
+            .expect("msg");
+        let row_query = stmt_2.query_row([], |row| Ok(CountQuery { count: row.get(0)? }));
+
+        let mut show = false;
+        if row_query.is_ok() {
+            let count = row_query.unwrap().count;
+            let mut total_page = count / 20;
+            if count % 20 > 0 {
+                total_page += 1;
+            }
+            self.imp().total_page.replace(total_page);
+            if count > 20 {
+                show = true;
+                self.imp()
+                    .info_label
+                    .set_label(&format!("{}/{}", cur_page, total_page));
+            }
+            if cur_page == 1 {
+                self.imp().prev_button.set_sensitive(false);
+                if total_page > 1 {
+                    self.imp().next_button.set_sensitive(true);
+                } else {
+                    self.imp().next_button.set_sensitive(false);
+                }
+            }
+        }
+        self.imp().show_all_button.set_visible(show);
+
         self.update_view();
     }
 
     pub fn delete_note(&self, id: i64) {
         let a = self.imp().sqlite_con.borrow();
-        let result = a.as_ref().clone().expect("msg").execute(
-            &format!("DELETE FROM note WHERE id={}", id),
-            ()
-        );
+        let result = a
+            .as_ref()
+            .clone()
+            .expect("msg")
+            .execute(&format!("DELETE FROM note WHERE id={}", id), ());
 
         if result.is_ok() {
             self.back();
+            self.imp().cur_page.replace(1);
+            self.imp().total_page.replace(1);
             self.refresh_data();
         }
     }
@@ -130,8 +236,12 @@ impl Window {
     pub fn update_note(&self, note: &NoteObject) {
         let a = self.imp().sqlite_con.borrow();
         let result = a.as_ref().clone().expect("msg").execute(
-            &format!("UPDATE note SET content=\"{}\" WHERE id={}", note.content(), note.id()),
-            ()
+            &format!(
+                "UPDATE note SET content=\"{}\" WHERE id={}",
+                note.content(),
+                note.id()
+            ),
+            (),
         );
 
         if result.is_ok() {
@@ -155,6 +265,8 @@ impl Window {
 
         if result.is_ok() {
             print!("{}", result.unwrap());
+            self.imp().cur_page.replace(1);
+            self.imp().total_page.replace(1);
             self.refresh_data();
         }
     }

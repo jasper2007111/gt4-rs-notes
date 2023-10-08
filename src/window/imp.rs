@@ -3,7 +3,7 @@ use std::cell::RefCell;
 use adw::StatusPage;
 use glib::subclass::InitializingObject;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, Button, CompositeTemplate, ListView, Stack};
+use gtk::{gio, glib, Button, CompositeTemplate, HeaderBar, Label, ListView, Stack};
 
 use rusqlite::Connection;
 
@@ -18,16 +18,34 @@ pub struct Window {
     pub add_button: TemplateChild<Button>,
 
     #[template_child]
+    pub prev_button: TemplateChild<Button>,
+
+    #[template_child]
+    pub next_button: TemplateChild<Button>,
+
+    #[template_child]
     pub list_view: TemplateChild<ListView>,
 
     #[template_child]
     pub status_page: TemplateChild<StatusPage>,
 
+    #[template_child]
+    pub info_label: TemplateChild<Label>,
+
+    #[template_child]
+    pub show_all_button: TemplateChild<HeaderBar>,
+
     // 数据
     pub notes: RefCell<Option<gio::ListStore>>,
 
     // Sqlite Connection
-    pub sqlite_con: RefCell<Option<Connection>>
+    pub sqlite_con: RefCell<Option<Connection>>,
+
+    // 当前页
+    pub cur_page: RefCell<i64>,
+
+    // 总页数
+    pub total_page: RefCell<i64>,
 }
 
 // The central trait for subclassing a GObject

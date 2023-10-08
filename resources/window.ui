@@ -17,7 +17,7 @@
                   <object class="GtkHeaderBar">
                     <property name="title-widget">
                       <object class="GtkLabel">
-                        <property name="label" translatable="yes">主页</property>
+                        <property name="label" translatable="yes">笔记</property>
                         <property name="single-line-mode">True</property>
                         <property name="ellipsize">end</property>
                         <property name="width-chars">5</property>
@@ -30,6 +30,9 @@
                     <child type="end">
                       <object class="GtkButton" id="add_button">
                         <property name="label" translatable="yes">新增</property>
+                        <!-- <style>
+                          <class name="flat" />
+                        </style> -->
                       </object>
                     </child>
                   </object>
@@ -37,19 +40,59 @@
                 <child>
                   <object class="GtkOverlay">
                     <child>
-                      <object class="GtkScrolledWindow">
-                        <property name="hscrollbar-policy">never</property>
-                        <property name="vexpand">True</property>
+                      <object class="GtkBox">
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkListView" id="list_view">
+                          <object class="GtkScrolledWindow">
+                            <property name="hscrollbar-policy">never</property>
+                            <property name="vexpand">True</property>
+                            <child>
+                              <object class="GtkListView" id="list_view">
+                                <property name="visible">False</property>
+                                <property name="show-separators">True</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkHeaderBar" id="show_all_button">
                             <property name="visible">False</property>
-                            <property name="show-separators">True</property>
+                            <property name="title-widget">
+                              <object class="GtkLabel" id="info_label">
+                                <property name="label" translatable="yes"></property>
+                                <property name="single-line-mode">True</property>
+                                <property name="ellipsize">end</property>
+                                <property name="width-chars">5</property>
+                                <style>
+                                  <class name="title" />
+                                </style>
+                              </object>
+                            </property>
+                            <property name="show-title-buttons">false</property>
+                            <child>
+                              <object class="GtkButton" id="prev_button">
+                                <property name="label" translatable="yes">上一页</property>
+                                <property name="sensitive">False</property>
+                                <style>
+                                  <class name="suggested-action"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child type="end">
+                              <object class="GtkButton" id="next_button">
+                                <property name="label" translatable="yes">下一页</property>
+                                <style>
+                                  <class name="suggested-action"/>
+                                </style>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
                     </child>
                     <child type="overlay">
                       <object class="AdwStatusPage" id="status_page">
+                        <property name="icon-name">empty</property>
                         <property name="description">暂无数据</property>
                       </object>
                     </child>

@@ -5,5 +5,6 @@
     <file compressed="true" preprocess="xml-stripblanks">create_page.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">details_page.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">note_row.ui</file>
+    <file preprocess="xml-stripblanks">icons/empty.svg</file>
   </gresource>
 </gresources>
