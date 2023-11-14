@@ -3,13 +3,14 @@ mod imp;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use adw::NavigationPage;
 
 use crate::{note_object::NoteObject, window::Window};
 use glib::{clone, Object};
 
 glib::wrapper! {
     pub struct DetailsPage(ObjectSubclass<imp::DetailsPage>)
-    @extends gtk::Box, gtk::Widget,
+    @extends NavigationPage, gtk::Widget,
     @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 

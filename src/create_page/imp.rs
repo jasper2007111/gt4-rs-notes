@@ -4,12 +4,15 @@ use glib::Binding;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate, TextView, Button};
 
+use adw::NavigationPage;
+use adw::subclass::prelude::NavigationPageImpl;
+
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
 #[template(resource = "/com/jasper/ji/gtk/rs/notes/create_page.ui")]
 pub struct CreatePage {
-    #[template_child]
-    pub back_button: TemplateChild<Button>,
+    // #[template_child]
+    // pub back_button: TemplateChild<Button>,
 
     #[template_child]
     pub text_view: TemplateChild<TextView>,
@@ -26,7 +29,7 @@ impl ObjectSubclass for CreatePage {
     // `NAME` needs to match `class` attribute of template
     const NAME: &'static str = "CreatePage";
     type Type = super::CreatePage;
-    type ParentType = gtk::Box;
+    type ParentType = NavigationPage;
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
@@ -44,4 +47,4 @@ impl ObjectImpl for CreatePage {}
 impl WidgetImpl for CreatePage {}
 
 // Trait shared by all boxes
-impl BoxImpl for CreatePage {}
+impl NavigationPageImpl for CreatePage {}

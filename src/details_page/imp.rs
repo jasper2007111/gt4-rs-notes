@@ -4,6 +4,9 @@ use glib::Binding;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate, TextView, Button};
 
+use adw::NavigationPage;
+use adw::subclass::prelude::NavigationPageImpl;
+
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
 #[template(resource = "/com/jasper/ji/gtk/rs/notes/details_page.ui")]
@@ -35,7 +38,7 @@ impl ObjectSubclass for DetailsPage {
     // `NAME` needs to match `class` attribute of template
     const NAME: &'static str = "DetailsPage";
     type Type = super::DetailsPage;
-    type ParentType = gtk::Box;
+    type ParentType = NavigationPage;
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
@@ -53,4 +56,4 @@ impl ObjectImpl for DetailsPage {}
 impl WidgetImpl for DetailsPage {}
 
 // Trait shared by all boxes
-impl BoxImpl for DetailsPage {}
+impl NavigationPageImpl for DetailsPage {}

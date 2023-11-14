@@ -1,5 +1,6 @@
 mod imp;
 
+use adw::NavigationPage;
 use glib::{clone, Object};
 use gtk::glib;
 use gtk::prelude::*;
@@ -9,7 +10,7 @@ use crate::window::Window;
 
 glib::wrapper! {
     pub struct CreatePage(ObjectSubclass<imp::CreatePage>)
-    @extends gtk::Box, gtk::Widget,
+    @extends NavigationPage, gtk::Widget,
     @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
@@ -25,11 +26,11 @@ impl CreatePage {
     }
 
     pub fn setup(&self, window: &Window) {
-        self.imp()
-            .back_button
-            .connect_clicked(clone!(@weak window=>move|_btn|{
-                window.back();
-            }));
+        // self.imp()
+        //     .back_button
+        //     .connect_clicked(clone!(@weak window=>move|_btn|{
+        //         window.back();
+        //     }));
 
         let text_view = self.imp().text_view.clone();
         self.imp()

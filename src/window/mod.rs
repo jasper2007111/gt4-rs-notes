@@ -36,19 +36,13 @@ impl Window {
         self.imp().total_page.replace(1);
 
         let stack = imp.stack.clone();
-        stack.set_transition_type(gtk::StackTransitionType::OverLeftRight);
+        // stack.set_transition_type(gtk::StackTransitionType::OverLeftRight);
 
         imp.add_button
             .connect_clicked(clone!(@weak stack,  @weak self as window=>move|_btn|{
-                let page = stack.child_by_name("CreatePage");
-                if let Some(p) = page {
-                    stack.set_visible_child(&p);
-                } else {
-                    let create_page = CreatePage::new();
-                    create_page.setup(&window);
-                    stack.add_named(&create_page, Some("CreatePage"));
-                    stack.set_visible_child(&create_page);
-                }
+                let create_page = CreatePage::new();
+                create_page.setup(&window);
+                stack.push(&create_page);
             }));
 
         self.imp().prev_button.connect_clicked(
@@ -99,11 +93,7 @@ impl Window {
     pub fn back(&self) {
         let imp = self.imp();
         let stack = imp.stack.clone();
-
-        let page = stack.child_by_name("HomePage");
-        if let Some(p) = page {
-            stack.set_visible_child(&p);
-        }
+        stack.pop();
     }
 
     fn notes(&self) -> gio::ListStore {
@@ -161,7 +151,7 @@ impl Window {
 
     fn refresh_data(&self) {
         let cur_page = self.imp().cur_page.borrow().clone();
-        println!("refresh_data: {}", cur_page);
+        // println!("refresh_data: {}", cur_page);
         let a = self.imp().sqlite_con.borrow();
         let sql = format!(
             "SELECT id, content, create_at FROM note ORDER by id DESC limit {}, 20",
@@ -331,16 +321,9 @@ impl Window {
             clone!(@weak stack, @weak self as window=>move|list_view, position| {
                 let model = list_view.model().unwrap();
                 let mut note = model.item(position).and_downcast::<NoteObject>().unwrap();
-
-                let page = stack.child_by_name("DetailsPage");
-                if let Some(p) = page {
-                    stack.remove(&p);
-                }
-
                 let details_page = DetailsPage::new();
                 details_page.setup(&window, &mut note);
-                stack.add_named(&details_page, Some("DetailsPage"));
-                stack.set_visible_child(&details_page);
+                stack.push(&details_page);
             }),
         );
     }

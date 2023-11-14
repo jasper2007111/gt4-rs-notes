@@ -1,9 +1,9 @@
 use std::cell::RefCell;
 
-use adw::StatusPage;
+use adw::{StatusPage, NavigationView};
 use glib::subclass::InitializingObject;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, Button, CompositeTemplate, HeaderBar, Label, ListView, Stack};
+use gtk::{gio, glib, Button, CompositeTemplate, HeaderBar, Label, ListView};
 
 use rusqlite::Connection;
 
@@ -12,7 +12,7 @@ use rusqlite::Connection;
 #[template(resource = "/com/jasper/ji/gtk/rs/notes/window.ui")]
 pub struct Window {
     #[template_child]
-    pub stack: TemplateChild<Stack>,
+    pub stack: TemplateChild<NavigationView>,
 
     #[template_child]
     pub add_button: TemplateChild<Button>,

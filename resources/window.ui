@@ -5,9 +5,9 @@
     <property name="height-request">480</property>
     <property name="title" translatable="yes">笔记</property>
     <child type="content">
-      <object class="GtkStack" id="stack">
+      <object class="AdwNavigationView" id="stack">
         <child>
-          <object class="GtkStackPage">
+          <object class="AdwNavigationPage">
             <property name="name">HomePage</property>
             <property name="title">Home</property>
             <property name="child">

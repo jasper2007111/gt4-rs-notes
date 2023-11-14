@@ -1,38 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="CreatePage" parent="GtkBox">
-    <property name="orientation">vertical</property>
-    <child>
-      <object class="GtkHeaderBar">
-        <property name="title-widget">
-          <object class="GtkLabel">
-            <property name="label" translatable="yes">创建</property>
-            <property name="single-line-mode">True</property>
-            <property name="ellipsize">end</property>
-            <property name="width-chars">5</property>
-            <style>
-              <class name="title" />
-            </style>
+  <template class="CreatePage" parent="AdwNavigationPage">
+    <property name="title" translatable="yes">创建</property>
+    <property name="tag">page-2</property>
+    <property name="child">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-end-title-buttons">false</property>
+            <child type="end">
+              <object class="GtkButton" id="save_button">
+                <property name="label" translatable="yes">保存</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkTextView" id="text_view">
+            <property name="vexpand">True</property>
+            <property name="wrap-mode">word-char</property>
           </object>
         </property>
-        <property name="show-title-buttons">false</property>
-        <child>
-          <object class="GtkButton" id="back_button">
-            <property name="label" translatable="yes">返回</property>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkButton" id="save_button">
-            <property name="label" translatable="yes">保存</property>
-          </object>
-        </child>
       </object>
-    </child>
-    <child>
-      <object class="GtkTextView" id="text_view">
-        <property name="vexpand">True</property>
-        <property name="wrap-mode">word-char</property>
-      </object>
-    </child>
+    </property>
   </template>
 </interface>
