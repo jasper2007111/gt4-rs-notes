@@ -8,6 +8,6 @@
 目前在Monjaro系统上进行交叉编译，主要参考[Cross-compiling](https://wiki.pine64.org/wiki/Cross-compiling#Installing_The_Toolchain)。
 
 遇到的问题已经整理成了一篇文章，详见[为Pinephone Pro交叉编译Rust应用程序
-](https://c2lang.com/2023/09/10/cross-compile-rust-applications-for-the-pinephone-pro/)。
+](https://c2lang.com/2023/11/12/cross-compile-rust-applications-for-the-pinephone-pro/)。
 
 ![](./screenshot.png)
