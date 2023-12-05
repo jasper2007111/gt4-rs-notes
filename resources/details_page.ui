@@ -6,28 +6,26 @@
     <property name="child">
       <object class="AdwToolbarView">
         <child type="top">
-          <child type="top">
-            <object class="AdwHeaderBar">
-              <property name="show-end-title-buttons">false</property>
-              <child type="end">
-                <object class="GtkButton" id="edit_button">
-                  <property name="label" translatable="yes">编辑</property>
-                </object>
-              </child>
-              <child type="end">
-                <object class="GtkButton" id="save_button">
-                  <property name="visible">False</property>
-                  <property name="label" translatable="yes">保存</property>
-                </object>
-              </child>
-              <child type="end">
-                <object class="GtkButton" id="cancel_button">
-                  <property name="visible">False</property>
-                  <property name="label" translatable="yes">取消</property>
-                </object>
-              </child>
-            </object>
-          </child>
+          <object class="AdwHeaderBar">
+            <property name="show-end-title-buttons">false</property>
+            <child type="end">
+              <object class="GtkButton" id="edit_button">
+                <property name="label" translatable="yes">编辑</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkButton" id="save_button">
+                <property name="visible">False</property>
+                <property name="label" translatable="yes">保存</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkButton" id="cancel_button">
+                <property name="visible">False</property>
+                <property name="label" translatable="yes">取消</property>
+              </object>
+            </child>
+          </object>
         </child>
         <property name="content">
           <object class="GtkBox">
@@ -49,7 +47,7 @@
               <object class="GtkButton" id="delete_button">
                 <property name="label" translatable="yes">删除</property>
                 <style>
-                  <class name="destructive-action"/>
+                  <class name="destructive-action" />
                 </style>
               </object>
             </child>

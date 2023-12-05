@@ -26,12 +26,6 @@ impl DetailsPage {
     }
 
     pub fn setup(&self, window: &Window, note: &mut NoteObject) {
-        self.imp()
-            .back_button
-            .connect_clicked(clone!(@weak window=>move|_btn|{
-                window.back();
-            }));
-
         let id = note.id().clone();
         self.imp()
             .delete_button
