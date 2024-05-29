@@ -11,3 +11,6 @@
 ](https://c2lang.com/2023/11/12/cross-compile-rust-applications-for-the-pinephone-pro/)。
 
 ![](./screenshot.png)
+
+### VS Python版
+Rust版的性能上并不佳，会有卡顿的现象，于是我又尝试GTK的Python版的绑定，发现在PinePhone Pro上与Rust版一样有卡顿的现象。但是Python版的似乎更加的写起来方便，代码也少一些，性能上并未发现Rust有什么优势，Rust的难学反而成了劣势。
