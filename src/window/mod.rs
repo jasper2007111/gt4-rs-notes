@@ -47,14 +47,12 @@ impl Window {
 
         self.imp().prev_button.connect_clicked(
             clone!(@weak stack,  @weak self as window=>move|_btn|{
-                println!("prev_page");
                 window.prev_page();
             }),
         );
 
         self.imp().next_button.connect_clicked(
             clone!(@weak stack,  @weak self as window=>move|_btn|{
-                println!("next_button");
                 window.next_page();
             }),
         );
