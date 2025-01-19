@@ -26,24 +26,22 @@ impl CreatePage {
     }
 
     pub fn setup(&self, window: &Window) {
-        // self.imp()
-        //     .back_button
-        //     .connect_clicked(clone!(@weak window=>move|_btn|{
-        //         window.back();
-        //     }));
-
         let text_view = self.imp().text_view.clone();
-        self.imp()
-            .save_button
-            .connect_clicked(clone!(@weak window, @weak text_view=>move|_btn|{
+        self.imp().save_button.connect_clicked(clone!(
+            #[weak]
+            window,
+            #[weak]
+            text_view,
+            move |_btn| {
                 let buffer = text_view.buffer();
                 let text = buffer.text(&buffer.start_iter(), &buffer.end_iter(), false);
                 if text.is_empty() {
-                    return
+                    return;
                 }
                 buffer.set_text("");
                 window.create_note(&text);
                 window.back();
-            }));
+            }
+        ));
     }
 }

@@ -38,24 +38,33 @@ impl Window {
         let stack = imp.stack.clone();
         // stack.set_transition_type(gtk::StackTransitionType::OverLeftRight);
 
-        imp.add_button
-            .connect_clicked(clone!(@weak stack,  @weak self as window=>move|_btn|{
+        imp.add_button.connect_clicked(clone!(
+            #[weak]
+            stack,
+            #[weak(rename_to = window)]
+            self,
+            move |_btn| {
                 let create_page = CreatePage::new();
                 create_page.setup(&window);
                 stack.push(&create_page);
-            }));
+            }
+        ));
 
-        self.imp().prev_button.connect_clicked(
-            clone!(@weak stack,  @weak self as window=>move|_btn|{
+        self.imp().prev_button.connect_clicked(clone!(
+            #[weak(rename_to = window)]
+            self,
+            move |_btn| {
                 window.prev_page();
-            }),
-        );
+            }
+        ));
 
-        self.imp().next_button.connect_clicked(
-            clone!(@weak stack,  @weak self as window=>move|_btn|{
+        self.imp().next_button.connect_clicked(clone!(
+            #[weak(rename_to = window)]
+            self,
+            move |_btn| {
                 window.next_page();
-            }),
-        );
+            }
+        ));
     }
 
     fn prev_page(&self) {
@@ -315,14 +324,18 @@ impl Window {
         // Set the factory of the list view
         self.imp().list_view.set_factory(Some(&factory));
         let stack = self.imp().stack.clone();
-        self.imp().list_view.connect_activate(
-            clone!(@weak stack, @weak self as window=>move|list_view, position| {
+        self.imp().list_view.connect_activate(clone!(
+            #[weak]
+            stack,
+            #[weak(rename_to = window)]
+            self,
+            move |list_view, position| {
                 let model = list_view.model().unwrap();
                 let mut note = model.item(position).and_downcast::<NoteObject>().unwrap();
                 let details_page = DetailsPage::new();
                 details_page.setup(&window, &mut note);
                 stack.push(&details_page);
-            }),
-        );
+            }
+        ));
     }
 }
