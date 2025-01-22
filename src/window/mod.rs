@@ -10,7 +10,7 @@ use crate::details_page::DetailsPage;
 use crate::note_object::NoteObject;
 use crate::note_row::NoteRow;
 
-use rusqlite::Connection;
+use r2d2_sqlite::SqliteConnectionManager;
 
 glib::wrapper! {
     pub struct Window(ObjectSubclass<imp::Window>)
@@ -119,9 +119,13 @@ impl Window {
         // Get state and set model
         self.imp().notes.replace(Some(model));
 
-        let conn = Connection::open("./notes.db3");
-        if let Ok(c) = conn {
-            let _ = c.execute(
+        // let conn = Connection::open("./notes.db3");
+
+        let manager = SqliteConnectionManager::file("./notes.db3");
+        let pool = r2d2::Pool::new(manager);
+
+        if let Ok(c) = pool {
+            let _ = c.get().unwrap().execute(
                 "CREATE TABLE note (
                     id    INTEGER PRIMARY KEY,
                     content  TEXT NOT NULL,
@@ -129,7 +133,7 @@ impl Window {
                 )",
                 (), // empty list of parameters.
             );
-            self.imp().sqlite_con.replace(Some(c));
+            self.imp().pool.replace(Some(c));
 
             self.create_test_data();
             self.refresh_data();
@@ -159,12 +163,13 @@ impl Window {
     fn refresh_data(&self) {
         let cur_page = self.imp().cur_page.borrow().clone();
         // println!("refresh_data: {}", cur_page);
-        let a = self.imp().sqlite_con.borrow();
+        let a = self.imp().pool.borrow();
         let sql = format!(
             "SELECT id, content, create_at FROM note ORDER by id DESC limit {}, 20",
             (cur_page - 1) * 20
         );
-        let mut stmt = a.as_ref().clone().expect("msg").prepare(&sql).expect("msg");
+        let con = a.as_ref().clone().expect("msg").get().unwrap();
+        let mut stmt = con.prepare(&sql).expect("msg");
         let note_iter = stmt
             .query_map([], |row| {
                 Ok(NoteObject::new(row.get(0)?, row.get(1)?, Some(row.get(2)?)))
@@ -178,11 +183,7 @@ impl Window {
         }
 
         let count_sql = "SELECT count(id) FROM note";
-        let mut stmt_2 = a
-            .as_ref()
-            .clone()
-            .expect("msg")
-            .prepare(count_sql)
+        let mut stmt_2 = con.prepare(count_sql)
             .expect("msg");
         let row_query = stmt_2.query_row([], |row| Ok(CountQuery { count: row.get(0)? }));
 
@@ -215,11 +216,9 @@ impl Window {
     }
 
     pub fn delete_note(&self, id: i64) {
-        let a = self.imp().sqlite_con.borrow();
-        let result = a
-            .as_ref()
-            .clone()
-            .expect("msg")
+        let a = self.imp().pool.borrow();
+        let con = a.as_ref().clone().expect("msg").get().unwrap();
+        let result = con
             .execute(&format!("DELETE FROM note WHERE id={}", id), ());
 
         if result.is_ok() {
@@ -231,8 +230,9 @@ impl Window {
     }
 
     pub fn update_note(&self, note: &NoteObject) {
-        let a = self.imp().sqlite_con.borrow();
-        let result = a.as_ref().clone().expect("msg").execute(
+        let a = self.imp().pool.borrow();
+        let con = a.as_ref().clone().expect("msg").get().unwrap();
+        let result = con.execute(
             &format!(
                 "UPDATE note SET content=\"{}\" WHERE id={}",
                 note.content(),
@@ -254,8 +254,10 @@ impl Window {
         }
         let note = NoteObject::new(0, content.to_string(), None);
 
-        let a = self.imp().sqlite_con.borrow();
-        let result = a.as_ref().clone().expect("msg").execute(
+        let a = self.imp().pool.borrow();
+        let con = a.as_ref().clone().expect("msg").get().unwrap();
+
+        let result = con.execute(
             "INSERT INTO note (content, create_at) VALUES (?1, ?2)",
             (note.content(), note.create()),
         );

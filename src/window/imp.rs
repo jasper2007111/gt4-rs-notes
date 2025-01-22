@@ -5,7 +5,8 @@ use glib::subclass::InitializingObject;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, Button, CompositeTemplate, HeaderBar, Label, ListView};
 
-use rusqlite::Connection;
+use r2d2::Pool;
+use r2d2_sqlite::SqliteConnectionManager;
 
 // Object holding the state
 #[derive(CompositeTemplate, Default)]
@@ -39,7 +40,7 @@ pub struct Window {
     pub notes: RefCell<Option<gio::ListStore>>,
 
     // Sqlite Connection
-    pub sqlite_con: RefCell<Option<Connection>>,
+    pub pool: RefCell<Option<Pool<SqliteConnectionManager>>>,
 
     // 当前页
     pub cur_page: RefCell<i64>,

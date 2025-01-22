@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 adw = { version = "0.7.1", package = "libadwaita", features = ["v1_4"] }
 chrono = "0.4.39"
+r2d2 = "0.8.10"
+r2d2_sqlite = "0.26.0"
 rusqlite = { version = "0.33.0", features = ["bundled"] }
 
 [dependencies.gtk]
