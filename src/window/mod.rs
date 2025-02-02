@@ -9,6 +9,7 @@ use crate::create_page::CreatePage;
 use crate::details_page::DetailsPage;
 use crate::note_object::NoteObject;
 use crate::note_row::NoteRow;
+use std::path::Path;
 
 use r2d2_sqlite::SqliteConnectionManager;
 
@@ -22,6 +23,8 @@ glib::wrapper! {
 struct CountQuery {
     count: i64,
 }
+
+const PAGE_SIZE: i64 = 20;
 
 impl Window {
     pub fn new(app: &adw::Application) -> Self {
@@ -118,10 +121,14 @@ impl Window {
 
         // Get state and set model
         self.imp().notes.replace(Some(model));
+        let path = "./notes.db3";
+        let has_db = if Path::new(path).exists() {
+            true
+        } else {
+            false
+        };
 
-        // let conn = Connection::open("./notes.db3");
-
-        let manager = SqliteConnectionManager::file("./notes.db3");
+        let manager = SqliteConnectionManager::file(path);
         let pool = r2d2::Pool::new(manager);
 
         if let Ok(c) = pool {
@@ -135,7 +142,9 @@ impl Window {
             );
             self.imp().pool.replace(Some(c));
 
-            self.create_test_data();
+            if !has_db {
+                self.create_test_data();
+            }
             self.refresh_data();
         }
 
@@ -166,7 +175,7 @@ impl Window {
         let a = self.imp().pool.borrow();
         let sql = format!(
             "SELECT id, content, create_at FROM note ORDER by id DESC limit {}, 20",
-            (cur_page - 1) * 20
+            (cur_page - 1) * PAGE_SIZE
         );
         let con = a.as_ref().clone().expect("msg").get().unwrap();
         let mut stmt = con.prepare(&sql).expect("msg");
@@ -183,19 +192,18 @@ impl Window {
         }
 
         let count_sql = "SELECT count(id) FROM note";
-        let mut stmt_2 = con.prepare(count_sql)
-            .expect("msg");
+        let mut stmt_2 = con.prepare(count_sql).expect("msg");
         let row_query = stmt_2.query_row([], |row| Ok(CountQuery { count: row.get(0)? }));
 
         let mut show = false;
         if row_query.is_ok() {
             let count = row_query.unwrap().count;
-            let mut total_page = count / 20;
-            if count % 20 > 0 {
+            let mut total_page = count / PAGE_SIZE;
+            if count % PAGE_SIZE > 0 {
                 total_page += 1;
             }
             self.imp().total_page.replace(total_page);
-            if count > 20 {
+            if count > PAGE_SIZE {
                 show = true;
                 self.imp()
                     .info_label
@@ -218,8 +226,7 @@ impl Window {
     pub fn delete_note(&self, id: i64) {
         let a = self.imp().pool.borrow();
         let con = a.as_ref().clone().expect("msg").get().unwrap();
-        let result = con
-            .execute(&format!("DELETE FROM note WHERE id={}", id), ());
+        let result = con.execute(&format!("DELETE FROM note WHERE id={}", id), ());
 
         if result.is_ok() {
             self.back();
